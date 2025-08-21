@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerUICanvas : MonoBehaviour
 {
     public Image[] hearts;
     float hp;
+    public GameObject GOpan;
     void Start()
     {
         
@@ -15,6 +17,7 @@ public class PlayerUICanvas : MonoBehaviour
     {
         hp = GetComponent<PlayerController>().hp;
         UpdateHP();
+        GO();
     }
 
     void UpdateHP()
@@ -23,6 +26,19 @@ public class PlayerUICanvas : MonoBehaviour
         {
             hearts[i].enabled = i < hp;
         }
+    }
+
+    void GO()
+    {
+        if (hp <= 0)
+        {
+            GOpan.SetActive(true);
+        }
+    }
+
+    public void Again()
+    {
+        SceneManager.LoadScene("TestTileMap");
     }
 
 }

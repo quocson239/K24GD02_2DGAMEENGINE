@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         score = 0;
-        scoreText.text = score.ToString();
+        scoreText.text = "Score: " + score.ToString();
     }
 
     // Update is called once per frame
@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
 
         animator.SetBool("Fall",isFall);
         
-        Die();
+        StartCoroutine(Die());
 
 
     }
@@ -106,18 +106,19 @@ public class PlayerController : MonoBehaviour
         
     }
 
-    void Die()
+    IEnumerator Die()
     {
         if (hp <= 0)
         {            
-            Destroy(gameObject, 0.5f);
+            yield return new WaitForSeconds(0.5f);
+            transform.GetComponent<SpriteRenderer>().enabled = false;
         }
     }
 
 
     void UpdateScore()
     {
-        scoreText.text = score.ToString();
+        scoreText.text = "Score: " + score.ToString();
     }
 
 
@@ -136,8 +137,13 @@ public class PlayerController : MonoBehaviour
         {
             if (collision.gameObject.CompareTag("DeadZone"))
             {
-                transform.position = savePoint;
                 TakeDame(1);
+                if (hp > 0)
+                {
+                    transform.position = savePoint;
+                    
+                }
+
             }
             if (collision.gameObject.CompareTag("Enemy"))
             {
