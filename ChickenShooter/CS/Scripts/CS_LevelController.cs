@@ -29,56 +29,20 @@ public class CS_LevelController : MonoBehaviour
         }
     }
     void Start()
-    {                
+    {
         InvokeRepeating("Lv1", 0f, 0.5f);
+        StartCoroutine(Run());
     }
 
     // Update is called once per frame
     void Update()
     {
         Debug.Log("i = "+ i);
-        if (i == 6 && lv == 1 && num == 0)
+        if (num == 6)
         {
             CancelInvoke();
-            lv++;
-            i = 0;
-            isLv2 = true;
-            cSpawn = spawnPosA;
-        }
-        
-        if (num == 0 && lv == 2 && isLv2)
-        {
-            StartCoroutine(Level2());
-        }
-
-        if (i == 6 && lv == 2 && num == 0)
-        {
-            CancelInvoke();
-            lv++;
-            i = 0;
-            isLv3 = true;
-            cSpawn = spawnPosA;            
-        }
-
-        if (num == 0 && lv == 3 && isLv3)
-        {
-            StartCoroutine(Level3());
-        }
-
-        if (i == 6 && lv == 3 && num < 0)
-        {
-            Debug.Log("?????????????????????????????");
-            CancelInvoke();
-            lv++;
-            i = 0;
-            isLv4 = true;
-            cSpawn = spawnPosA;
             num = 0;
-        }
-
-        if (lv == 4 && isLv4)
-        {
-            StartCoroutine(Level4());   
+            i = 0;
         }
     }
 
@@ -88,7 +52,7 @@ public class CS_LevelController : MonoBehaviour
         GameObject ck = Instantiate(chickenPrefab, cSpawn.position, Quaternion.Euler(0,0,j * 45));
         ck.GetComponent<CS_EnemyControl>().t = pos;
         ck.GetComponent<CS_EnemyControl>().isIntro = true;
-        if(lv > 1) ck.GetComponent<CS_EnemyControl>().hp += 1;
+        if(lv > 1) ck.GetComponent<CS_EnemyControl>().hp += 3;
         cSpawn = i < 2 ? spawnPosA : spawnPosB;
         num ++; 
 
@@ -100,8 +64,7 @@ public class CS_LevelController : MonoBehaviour
         GameObject ck = Instantiate(chickenPrefab, cSpawn.position, Quaternion.Euler(0, 0, j * 45));        
         ck.GetComponent<CS_EnemyControl>().isCircle = true;
         ck.GetComponent<CS_EnemyControl>().isCMDone = true;
-        if (lv == 3) ck.GetComponent<CS_EnemyControl>().hp += 2;        
-        num++;
+        if (lv > 1) ck.GetComponent<CS_EnemyControl>().hp += 10;                
 
     }
 
@@ -124,15 +87,34 @@ public class CS_LevelController : MonoBehaviour
         }            
     }
     void Lv3()
+    {        
+        ckPos[0] = new Vector2(-5,3);
+        ckPos[1] = new Vector2(-7, 1);
+        ckPos[2] = new Vector2(-5, 1);
+        ckPos[3] = new Vector2(5, 3);
+        ckPos[4] = new Vector2(-7, 1);
+        ckPos[5] = new Vector2(5, 1);
+
+    }
+
+    IEnumerator Run()
     {
-        for (int i = 0; i < 6; i++)
-        {
-            ckPos[i] = new Vector2(x + i * (3f), y - 2 * (i % 2));
-        }
+        
+        yield return new WaitForSeconds(15f);
+        DestroyLeft();
+        StartCoroutine(Level2());
+        yield return StartCoroutine(Level2());
+        DestroyLeft();
+        StartCoroutine(Level3());
+        yield return StartCoroutine(Level3());
+        DestroyLeft();
+        StartCoroutine(Level4());
+
     }
 
     IEnumerator Level2()
     {
+        lv++;        
         isLv2 = false;
         InvokeRepeating("Lv1", 0, 0.5f);
         yield return new WaitForSeconds(3f);        
@@ -145,27 +127,39 @@ public class CS_LevelController : MonoBehaviour
         InvokeRepeating("Lv1", 0f, 0.5f);
         yield return new WaitForSeconds(3.5f);
         CancelInvoke();
-        
+        yield return new WaitForSeconds(5f);
+
     }
 
     IEnumerator Level3()
     {
+        lv++;        
         isLv3 = false;
         Lv3();
         yield return new WaitForSeconds(0.1f);
-        InvokeRepeating("Lv1", 0, 0.5f);
-        InvokeRepeating("SpawnChickenVip", 0.5f, 0.5f);
+        InvokeRepeating("Lv1", 0, 0.5f);        
+        InvokeRepeating("SpawnChickenVip", 0, 0.5f);
         yield return new WaitForSeconds(5f);        
         CancelInvoke();
-        i = 6;
-        
+        yield return new WaitForSeconds(5f);
+
     }
 
     IEnumerator Level4()
-    {
+    {        
         isLv4 = false;
         Instantiate(bossPrefab, spawnPosC.position, Quaternion.identity);
         yield return null;
     }
 
+
+    void DestroyLeft()
+    {
+        GameObject[] objectsToDestroy = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (GameObject obj in objectsToDestroy)
+        {
+            Destroy(obj);
+        }
+    }    
 }

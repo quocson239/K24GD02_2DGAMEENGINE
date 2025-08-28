@@ -147,6 +147,10 @@ public class CS_ShipController : MonoBehaviour
             {
                 StartCoroutine(TakeDame(2));                
             }
+            if (collision.gameObject.CompareTag("Boss"))
+            {
+                StartCoroutine(TakeDame(2));
+            }
         }
     }
 

@@ -20,7 +20,7 @@ public class CS_EnemyControl : MonoBehaviour
     public bool isCircle;
     public Vector3 t;
 
-    float radius = 5f; // Bán kính của quỹ đạo
+    float radius = 3f; // Bán kính của quỹ đạo
     float speed = 2f; // Tốc độ di chuyển
     float angle; // Góc hiện tại
 
@@ -80,8 +80,8 @@ public class CS_EnemyControl : MonoBehaviour
         angle += speed * Time.deltaTime;
 
         // Tính toán vị trí mới
-        float x = Mathf.Cos(angle) * radius; // Tính toán tọa độ x
-        float y = Mathf.Sin(angle) * radius; // Tính toán tọa độ y
+        float x = 0 + Mathf.Cos(angle) * radius; // Tính toán tọa độ x
+        float y = 3 + Mathf.Sin(angle) * radius; // Tính toán tọa độ y
 
         // Cập nhật vị trí của vật thể
         transform.position = new Vector3(x, y, angle);        
@@ -111,6 +111,10 @@ public class CS_EnemyControl : MonoBehaviour
         {
             TakeDame(1);
             Destroy(collision.gameObject);
+            if (hp <= 0)
+            {
+                Ship.GetComponent<CS_ShipController>().score += 5;
+            }
         }
     }
 
@@ -120,14 +124,12 @@ public class CS_EnemyControl : MonoBehaviour
         animator.SetTrigger("Hurt");
         int n = Random.Range(1, 5);
         if (hp <= 0)
-        {
-            Ship.GetComponent<CS_ShipController>().score += 5;
+        {            
             GetComponent<BoxCollider2D>().enabled = false;
             Destroy(this.gameObject, 0.5f);
             animator.SetBool("Dead", true);
             Instantiate(legChicken, transform.position, Quaternion.identity);
-            if (n == 2) DropPresent();
-            lvController.GetComponent<CS_LevelController>().num--;
+            if (n == 2) DropPresent();            
         }
     }
 }
